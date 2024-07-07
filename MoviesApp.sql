@@ -158,4 +158,5 @@ begin
 
 INSERT INTO Movies (Name, Description, CoverPhoto, DirectorId, GenreId, LanguageId)
 VALUES ('Interstellar', 'A team of explorers travel through a wormhole in space.', 'interstellar.jpg', 2, 1, 1);
-
+select * from Movies
+delete from Movies where Id=5
