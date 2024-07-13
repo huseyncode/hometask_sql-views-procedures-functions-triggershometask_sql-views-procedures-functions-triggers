@@ -44,10 +44,12 @@ SELECT * FROM Students
 SELECT * FROM Groups
 
 --a.
-CREATE TRIGGER GroupLimiter
+CREATE TRIGGER LimitAndAgeChecker
 ON Students
 AFTER INSERT
 AS
+BEGIN
+--a LimitChecker
 IF EXISTS (SELECT Count(Students.GroupId)as Students , Groups.Limit as Limit,Groups.Name
 				FROM Students
 				INNER JOIN Groups ON Groups.Id=Students.GroupId
@@ -58,16 +60,7 @@ IF EXISTS (SELECT Count(Students.GroupId)as Students , Groups.Limit as Limit,Gro
 	ROLLBACK
 	RAISERROR('Qrupun limiti dolub!',16,1)
 END
-GO
---Yoxlamag ucun insert
-INSERT INTO Students (Name, Surname, Email, PhoneNumber, BirthDate, GPA, GroupId)
-VALUES ('John', 'Doe', 'john.doe@example.com', '123-456-7890', '2000-05-15', 3.8, 1);
---b
-Create TRIGGER AgeChecker
-On Students
-AFTER INSERT
-AS
-
+--b AgeChecker
 IF EXISTS(SELECT Students.BirthDate
 				FROM Students
 				WHERE DATEDIFF(day,Students.BirthDate,GETDATE())<=365.25*16
@@ -75,9 +68,15 @@ IF EXISTS(SELECT Students.BirthDate
 	BEGIN
 	ROLLBACK
     RAISERROR ('Yaş 16-dan kiçik ola bilməz!', 16, 1);
-END
+	END
+END;
 GO
-----Yoxlamag ucun insert
+--a Yoxlamag ucun insert
+INSERT INTO Students (Name, Surname, Email, PhoneNumber, BirthDate, GPA, GroupId)
+VALUES ('John', 'Doe', 'john.doe@example.com', '123-456-7890', '2000-05-15', 3.8, 1);
+delete from Students where Id=14
+select* from Students
+--b Yoxlamag ucun insert
 INSERT INTO Students (Name, Surname, Email, PhoneNumber, BirthDate, GPA, GroupId)
 VALUES ('Alice', 'Smith', 'alice.smith@example.com', '123-456-7890', '2009-01-01', 3.5, 2);
 
